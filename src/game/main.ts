@@ -1,4 +1,4 @@
-import { Game as MainGame } from './scenes/Game';
+import { GameScene } from './scenes/GameScene';
 import { AUTO, Game } from 'phaser';
 
 
@@ -8,8 +8,14 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 768,
     parent: 'game-container',
     backgroundColor: '#028af8',
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false
+        }
+    },
     scene: [
-        MainGame
+        GameScene
     ]
 };
 
