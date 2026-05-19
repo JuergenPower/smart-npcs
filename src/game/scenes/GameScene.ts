@@ -2,14 +2,17 @@ import { Scene } from 'phaser';
 import { Player } from '../entities/Player';
 import { Npc } from '../entities/Npc';
 import { InteractionMenu } from '../../ui/InteractionMenue';
+import { DialogBox } from '../../ui/DialogBox';
+import { UIState, UIStateType } from '../../systems/UIState'
 
 export class GameScene extends Scene
 {
     camera: Phaser.Cameras.Scene2D.Camera;
     player!: Player;
-    npc1!: Npc;
+    npcArgus!: Npc;
     interactionMenu!: InteractionMenu;
-    menuOpen!: boolean;
+    uiState!: UIState;
+    dialogBox!: DialogBox;
 
     constructor ()
     {
@@ -24,8 +27,8 @@ export class GameScene extends Scene
 
     create ()
     {
-        this.interactionMenu = new InteractionMenu(this);
-        this.menuOpen = false;
+        this.uiState = new UIState();
+        this.interactionMenu = new InteractionMenu(this, this.uiState);
         // Add world visible bounds
         this.physics.world.setBounds(10, 10, 1000, 700);
         //this.cameras.main.setBounds(10, 10, 1000, 700);
@@ -38,21 +41,20 @@ export class GameScene extends Scene
         this.cameras.main.startFollow(this.player.sprite, true);
 
         // Add NPCs
-        this.npc1 = new Npc(this,700, 300, 'Argus');
+        this.npcArgus = new Npc(this,700, 300, 'Argus');
 
         // Enable collision detection
         this.physics.add.collider(
             this.player.sprite,
-            this.npc1.sprite
+            this.npcArgus.sprite
         );
 
         // click input handler
         this.input.on('pointerdown', () => {
-            if (this.menuOpen){
+            if (this.uiState.hasState(UIStateType.INTERACTION_MENU)){
                 this.interactionMenu.hide();
-                this.menuOpen = false;
+                this.uiState.close(UIStateType.INTERACTION_MENU);
             }
-            console.log('pointerdown event triggered') 
         });
 
         this.input.on(
@@ -67,13 +69,14 @@ export class GameScene extends Scene
                 if (npc) {
                     const interactions = npc.getInteractions();
                     const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
-                    this.menuOpen = true;
+                    this.uiState.open(UIStateType.INTERACTION_MENU);
                     this.interactionMenu.show(worldPoint.x, worldPoint.y, interactions);
                 }
-                console.log('gameobjectdown event triggered')
                 event.stopPropagation();
             }
         );
+
+        this.dialogBox = new DialogBox(this, this.uiState);
 
     }
 

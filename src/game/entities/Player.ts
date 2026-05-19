@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 
 export class Player {
 
+    scene: Phaser.Scene;
     sprite: Phaser.Physics.Arcade.Sprite;
     keys!: {
         W: Phaser.Input.Keyboard.Key;
@@ -12,6 +13,7 @@ export class Player {
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
 
+        this.scene = scene;
         this.sprite = scene.physics.add.sprite(x, y, 'player');
         this.sprite.setCollideWorldBounds(true);
         this.keys = scene.input.keyboard!.addKeys({
@@ -23,8 +25,14 @@ export class Player {
     }
 
     update() {
-        const speed = 200;
 
+        const gameScene = this.scene as any;  
+        if (gameScene.uiState.blocksMovement()) {
+            this.sprite.setVelocity(0);
+            return;
+        }
+
+        const speed = 200;
         this.sprite.setVelocity(0);
 
         if (this.keys.A.isDown) {
