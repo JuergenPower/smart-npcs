@@ -65,14 +65,17 @@ export class GameScene extends Scene
                 event: Phaser.Types.Input.EventData
             ) => 
             {
-                const npc = (gameObject as any).npcRef;
-                if (npc) {
-                    const interactions = npc.getInteractions();
-                    const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
-                    this.uiState.open(UIStateType.INTERACTION_MENU);
-                    this.interactionMenu.show(worldPoint.x, worldPoint.y, interactions);
-                }
                 event.stopPropagation();
+                const npc = (gameObject as any).npcRef;
+                if(!npc) return;
+                if(!npc.canInteract(this.player.sprite)){
+                    console.log("Too far away.")
+                    return;
+                }
+                const interactions = npc.getInteractions();
+                const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+                this.uiState.open(UIStateType.INTERACTION_MENU);
+                this.interactionMenu.show(worldPoint.x, worldPoint.y, interactions);
             }
         );
 

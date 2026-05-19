@@ -7,6 +7,7 @@ export class Npc implements Interactable {
     scene: Phaser.Scene;
     sprite: Phaser.Physics.Arcade.Sprite | Phaser.Physics.Arcade.Image;
     name: string;
+    private interactionRange: number = 150;
 
     constructor(scene: Phaser.Scene, x: number, y: number, name: string) {
         this.name = name;
@@ -44,5 +45,14 @@ export class Npc implements Interactable {
                 }
             }
         ];
+    }
+
+    canInteract(player: Phaser.Physics.Arcade.Sprite): boolean {
+        const dx = player.x - this.sprite.x;
+        const dy = player.y - this.sprite.y;
+
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        return distance <= this.interactionRange;
     }
 }
