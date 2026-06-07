@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Interaction } from '../types/Interaction';
+import { Interaction } from '../types/types';
 import { UIState, UIStateType } from '../systems/UIState';
 
 export class InteractionMenu {

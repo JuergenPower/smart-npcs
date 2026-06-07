@@ -1,9 +1,11 @@
 import * as Phaser from 'phaser';
+import { Inventory } from '../../systems/Inventory';
 
 export class Player {
 
     scene: Phaser.Scene;
     sprite: Phaser.Physics.Arcade.Sprite;
+    inventory: Inventory;
     keys!: {
         W: Phaser.Input.Keyboard.Key;
         A: Phaser.Input.Keyboard.Key;
@@ -17,6 +19,7 @@ export class Player {
         this.sprite = scene.physics.add.sprite(x, y, 'player');
         this.sprite.body?.setCircle(32);
         this.sprite.setCollideWorldBounds(true);
+        this.inventory = new Inventory();
         this.keys = scene.input.keyboard!.addKeys({
             W: Phaser.Input.Keyboard.KeyCodes.W,
             A: Phaser.Input.Keyboard.KeyCodes.A,

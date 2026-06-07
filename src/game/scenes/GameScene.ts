@@ -4,6 +4,8 @@ import { Npc } from '../entities/Npc';
 import { InteractionMenu } from '../../ui/InteractionMenue';
 import { DialogBox } from '../../ui/DialogBox';
 import { UIState, UIStateType } from '../../systems/UIState'
+import { WorldItem } from '../entities/WorldItem';
+import { InventoryUI } from '../../ui/InventoryUI';
 
 export class GameScene extends Scene
 {
@@ -13,6 +15,7 @@ export class GameScene extends Scene
     interactionMenu!: InteractionMenu;
     uiState!: UIState;
     dialogBox!: DialogBox;
+    inventoryUI!: InventoryUI;
 
     constructor ()
     {
@@ -23,6 +26,7 @@ export class GameScene extends Scene
     {
         this.load.image('player', '/assets/player.png');
         this.load.image('npc', '/assets/npc.png');
+        this.load.image('Rotted wood', '/assets/rottedWood.png')
     }
 
     create ()
@@ -36,8 +40,20 @@ export class GameScene extends Scene
         graphics.lineStyle(4, 0x000000);
         graphics.strokeRect(10, 10, 1000, 700);
 
+        // Add interactable world items
+        const rottedWood = new WorldItem(this, 600, 300, {id: 'rottedWood1',name: 'Rotted wood'});
+
         // Add player with attached camera
         this.player = new Player(this, 512, 384);
+
+        // Add UI
+        this.dialogBox = new DialogBox(this, this.uiState);
+        this.inventoryUI = new InventoryUI(this, this.player.inventory);
+
+        // TEST TODO: remove this
+        this.player.inventory.addItem({id: 'apple1', name: 'Apple'});
+        // END TEST
+
         this.cameras.main.startFollow(this.player.sprite, true);
 
         // Add NPCs
@@ -48,6 +64,11 @@ export class GameScene extends Scene
             this.player.sprite,
             this.npcArgus.sprite
         );
+
+        // key input handler
+        this.input.keyboard!.on('keydown-I', () => {
+            this.inventoryUI.toggle();
+        });
 
         // click input handler
         this.input.on('pointerdown', () => {
@@ -66,20 +87,27 @@ export class GameScene extends Scene
             ) => 
             {
                 event.stopPropagation();
-                const npc = (gameObject as any).npcRef;
-                if(!npc) return;
-                if(!npc.canInteract(this.player.sprite)){
-                    console.log("Too far away.")
+                const npcRef = (gameObject as any).npcRef;
+                if(npcRef){
+                    if(!npcRef.canInteract(this.player.sprite)){
+                        console.log("Too far away.")
+                        return;
+                    }
+                    const interactions = npcRef.getInteractions();
+                    const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+                    this.uiState.open(UIStateType.INTERACTION_MENU);
+                    this.interactionMenu.show(worldPoint.x, worldPoint.y, interactions);
                     return;
                 }
-                const interactions = npc.getInteractions();
-                const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
-                this.uiState.open(UIStateType.INTERACTION_MENU);
-                this.interactionMenu.show(worldPoint.x, worldPoint.y, interactions);
+
+                const worldItemRef = (gameObject as any).worldItemRef;
+                if (worldItemRef) {
+                    worldItemRef.pickup(this.player);
+                }
             }
         );
 
-        this.dialogBox = new DialogBox(this, this.uiState);
+
 
     }
 

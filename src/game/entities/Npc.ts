@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
-import { Interactable } from '../../types/Interactable';
-import { Interaction } from '../../types/Interaction';
+import { Interactable } from '../../types/interfaces';
+import { Interaction } from '../../types/types';
 
 export class Npc implements Interactable {
 

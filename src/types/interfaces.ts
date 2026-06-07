@@ -1,4 +1,4 @@
-import { Interaction } from './Interaction';
+import { Interaction } from './types';
 
 export interface Interactable {
     sprite: Phaser.GameObjects.GameObject;
