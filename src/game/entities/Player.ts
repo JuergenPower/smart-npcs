@@ -15,6 +15,7 @@ export class Player {
 
         this.scene = scene;
         this.sprite = scene.physics.add.sprite(x, y, 'player');
+        this.sprite.body?.setCircle(32);
         this.sprite.setCollideWorldBounds(true);
         this.keys = scene.input.keyboard!.addKeys({
             W: Phaser.Input.Keyboard.KeyCodes.W,

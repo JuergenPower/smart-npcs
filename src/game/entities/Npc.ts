@@ -15,6 +15,7 @@ export class Npc implements Interactable {
         this.sprite = scene.physics.add.staticSprite(x, y, 'npc');
         this.sprite.setInteractive();
         (this.sprite as any).npcRef = this;
+        this.sprite.body?.setCircle(32)
         // this.sprite.setCollideWorldBounds(true);
     }
 
