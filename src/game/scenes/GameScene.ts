@@ -68,6 +68,10 @@ export class GameScene extends Scene
         // key input handler
         this.input.keyboard!.on('keydown-I', () => {
             this.inventoryUI.toggle();
+            if(this.inventoryUI.isOpen())
+                this.uiState.open(UIStateType.INVENTORY)
+            else
+                this.uiState.close(UIStateType.INVENTORY)
         });
 
         // click input handler
@@ -102,7 +106,13 @@ export class GameScene extends Scene
 
                 const worldItemRef = (gameObject as any).worldItemRef;
                 if (worldItemRef) {
+                    if(!worldItemRef.canInteract(this.player.sprite)){
+                        console.log("Too far away.")
+                        return;
+                    }
                     worldItemRef.pickup(this.player);
+                    if(this.uiState.hasState(UIStateType.INVENTORY))
+                        this.inventoryUI.render();
                 }
             }
         );

@@ -1,7 +1,8 @@
 export enum UIStateType {
     NONE,
     INTERACTION_MENU,
-    DIALOG
+    DIALOG,
+    INVENTORY
 }
 
 export class UIState {
@@ -16,7 +17,7 @@ export class UIState {
         this.activeStates.add(state);
         console.log(
             'Open states:',
-            Array.from(this.activeStates)
+            Array.from(this.activeStates).map(s => UIStateType[s])
         );
     }
 
@@ -25,10 +26,9 @@ export class UIState {
             return;
         }
         this.activeStates.delete(state);
-
         console.log(
             'Open states:',
-            Array.from(this.activeStates)
+            Array.from(this.activeStates).map(s => UIStateType[s])
         );
     }
 
@@ -37,7 +37,7 @@ export class UIState {
     }
 
     blocksMovement(): boolean {
-        return this.activeStates.size > 0
+        return this.activeStates.has(UIStateType.INTERACTION_MENU) || this.activeStates.has(UIStateType.DIALOG)
     }
 
 };

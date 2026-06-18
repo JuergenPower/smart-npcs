@@ -21,6 +21,10 @@ export class InventoryUI {
             fontSize: '16px'
         });
 
+        this.container.setScrollFactor(0);
+        this.background.setScrollFactor(0);
+        this.text.setScrollFactor(0);
+
         this.container.add([
             this.background,
             this.text
@@ -35,7 +39,7 @@ export class InventoryUI {
         this.container.setVisible(this.visible);
     }
 
-    private render() {
+    render() {
 
         const items = this.inventory.getItems();
         const lines = items.map(i => `- ${i.name}`);
@@ -44,7 +48,7 @@ export class InventoryUI {
         );
     }
 
-    isOpen() {
+    isOpen(): boolean {
         return this.visible;
     }
 }
