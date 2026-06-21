@@ -3,7 +3,8 @@ export type Interaction = {
     action: () => void;
 };
 
-export type Item = {
-    id: string;
-    name: string;
+export type ShowInteractionMenuEvent = {
+    x: number;
+    y: number;
+    interactions: Interaction[];
 };

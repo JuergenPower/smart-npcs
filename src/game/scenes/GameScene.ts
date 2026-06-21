@@ -6,6 +6,8 @@ import { DialogBox } from '../../ui/DialogBox';
 import { UIState, UIStateType } from '../../systems/UIState'
 import { WorldItem } from '../entities/WorldItem';
 import { InventoryUI } from '../../ui/InventoryUI';
+import { apple, wood } from '../entities/Items';
+import { ShowInteractionMenuEvent } from '../../types/types';
 
 export class GameScene extends Scene
 {
@@ -26,7 +28,7 @@ export class GameScene extends Scene
     {
         this.load.image('player', '/assets/player.png');
         this.load.image('npc', '/assets/npc.png');
-        this.load.image('Rotted wood', '/assets/rottedWood.png')
+        this.load.image('Wood', '/assets/rottedWood.png')
     }
 
     create ()
@@ -41,7 +43,7 @@ export class GameScene extends Scene
         graphics.strokeRect(10, 10, 1000, 700);
 
         // Add interactable world items
-        const rottedWood = new WorldItem(this, 600, 300, {id: 'rottedWood1',name: 'Rotted wood'});
+        const wood1 = new WorldItem(this, 600, 300, wood);
 
         // Add player with attached camera
         this.player = new Player(this, 512, 384);
@@ -51,7 +53,7 @@ export class GameScene extends Scene
         this.inventoryUI = new InventoryUI(this, this.player.inventory);
 
         // TEST TODO: remove this
-        this.player.inventory.addItem({id: 'apple1', name: 'Apple'});
+        this.player.inventory.addItem(apple);
         // END TEST
 
         this.cameras.main.startFollow(this.player.sprite, true);
@@ -90,9 +92,10 @@ export class GameScene extends Scene
                 event: Phaser.Types.Input.EventData
             ) => 
             {
-                event.stopPropagation();
+                
                 const npcRef = (gameObject as any).npcRef;
                 if(npcRef){
+                    event.stopPropagation();
                     if(!npcRef.canInteract(this.player.sprite)){
                         console.log("Too far away.")
                         return;
@@ -106,6 +109,7 @@ export class GameScene extends Scene
 
                 const worldItemRef = (gameObject as any).worldItemRef;
                 if (worldItemRef) {
+                    event.stopPropagation();
                     if(!worldItemRef.canInteract(this.player.sprite)){
                         console.log("Too far away.")
                         return;
@@ -117,7 +121,13 @@ export class GameScene extends Scene
             }
         );
 
-
+        this.input.on('showInteractionMenu', (data: ShowInteractionMenuEvent) => {
+            this.interactionMenu.show(
+                data.x,
+                data.y,
+                data.interactions
+            );
+        });
 
     }
 

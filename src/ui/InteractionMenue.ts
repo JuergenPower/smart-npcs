@@ -22,7 +22,7 @@ export class InteractionMenu {
         this.clear();
         this.container.setVisible(true);
         this.container.setPosition(x, y);
-        this.container.setDepth(1000);
+        this.container.setDepth(3000);
 
         let offsetY = 5;
 

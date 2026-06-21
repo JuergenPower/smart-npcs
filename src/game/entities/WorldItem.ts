@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Item } from '../../types/types';
+import { Item } from '../../types/interfaces';
 import { Player } from './Player';
 
 export class WorldItem {
