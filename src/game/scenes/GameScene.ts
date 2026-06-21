@@ -6,7 +6,6 @@ import { DialogBox } from '../../ui/DialogBox';
 import { UIState, UIStateType } from '../../systems/UIState'
 import { WorldItem } from '../entities/WorldItem';
 import { InventoryUI } from '../../ui/InventoryUI';
-import { apple, wood } from '../entities/Items';
 import { ShowInteractionMenuEvent } from '../../types/types';
 
 export class GameScene extends Scene
@@ -41,20 +40,14 @@ export class GameScene extends Scene
         const graphics = this.add.graphics();
         graphics.lineStyle(4, 0x000000);
         graphics.strokeRect(10, 10, 1000, 700);
-
-        // Add interactable world items
-        const wood1 = new WorldItem(this, 600, 300, wood);
-
         // Add player with attached camera
         this.player = new Player(this, 512, 384);
+        // Add interactable world items
+        const wood1 = new WorldItem(this, 600, 300, this.player, "Wood");
 
         // Add UI
         this.dialogBox = new DialogBox(this, this.uiState);
         this.inventoryUI = new InventoryUI(this, this.player.inventory);
-
-        // TEST TODO: remove this
-        this.player.inventory.addItem(apple);
-        // END TEST
 
         this.cameras.main.startFollow(this.player.sprite, true);
 
@@ -92,7 +85,6 @@ export class GameScene extends Scene
                 event: Phaser.Types.Input.EventData
             ) => 
             {
-                
                 const npcRef = (gameObject as any).npcRef;
                 if(npcRef){
                     event.stopPropagation();
@@ -114,9 +106,11 @@ export class GameScene extends Scene
                         console.log("Too far away.")
                         return;
                     }
-                    worldItemRef.pickup(this.player);
-                    if(this.uiState.hasState(UIStateType.INVENTORY))
-                        this.inventoryUI.render();
+                    const interactions = worldItemRef.getInteractions();
+                    const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
+                    this.uiState.open(UIStateType.INTERACTION_MENU);
+                    this.interactionMenu.show(worldPoint.x, worldPoint.y, interactions);
+                    return;
                 }
             }
         );
@@ -129,6 +123,9 @@ export class GameScene extends Scene
             );
         });
 
+        this.input.on('inventoryUpdated', () => {
+            this.inventoryUI.render();
+        });
     }
 
     update ()

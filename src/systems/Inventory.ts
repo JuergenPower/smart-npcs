@@ -9,9 +9,9 @@ export class Inventory {
         console.log('Added item:', item.name);
     }
 
-    removeItem(itemId: string) {
-        this.items = this.items.filter(i => i.id !== itemId);
-        console.log('Removed item:', itemId);
+    removeItem(item: Item) {
+        this.items = this.items.filter(i => i !== item);
+        console.log('Removed item:', item);
     }
 
     getItems(): Item[] {
